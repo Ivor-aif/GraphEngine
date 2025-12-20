@@ -6,7 +6,7 @@
 
 Graph::Graph(bool directed, int nodeCount) : directed(directed), nodeCount(nodeCount) {
     this->edgeCount = 0;
-    this->adjacencyList = std::vector<std::vector<int>>(0, std::vector<int>(0, 0));
+    this->adjacencyList = std::vector<std::vector<int>>(nodeCount, std::vector<int>(0, 0));
 }
 
 Graph::~Graph() = default;
@@ -37,7 +37,9 @@ void Graph::addNode() {
 
 void Graph::addNodes(int count) {
     this->nodeCount += count;
-    this->adjacencyList.emplace_back(count, 0);
+    for (int i = 0; i < count; i++) {
+        this->adjacencyList.emplace_back(0);
+    }
 }
 
 void Graph::addEdge(std::pair<int, int> edge) {
@@ -49,15 +51,18 @@ void Graph::addEdge(std::pair<int, int> edge) {
         std::cerr << "The second node index(" << edge.second << ") of the new edge out of this graph with " << this->getNodeCount() << " node(s)." << std::endl;
         return;
     }
+    this->edgeCount ++;
     for (int i = 0; i <= this->adjacencyList[edge.first].size(); ++i) {
         if (i == this->adjacencyList[edge.first].size() || edge.second < this->adjacencyList[edge.first][i]) {
             this->adjacencyList[edge.first].insert(this->adjacencyList[edge.first].begin() + i, edge.second);
+            break;
         }
     }
     if (!this->isDirected()) {
         for (int i = 0; i <= this->adjacencyList[edge.second].size(); ++i) {
             if (i == this->adjacencyList[edge.second].size() || edge.first < this->adjacencyList[edge.second][i]) {
                 this->adjacencyList[edge.second].insert(this->adjacencyList[edge.second].begin() + i, edge.first);
+                break;
             }
         }
     }
@@ -67,11 +72,11 @@ void Graph::addEdges(const std::vector<std::pair<int, int>>& edges) {
     for (std::pair<int, int> edge: edges) {
         if (edge.first >= this->getNodeCount()) {
             std::cerr << "The first node index(" << edge.first << ") of the new edge [" << edge.first << ", " << edge.second << "] out of this graph with " << this->getNodeCount() << " node(s)." << std::endl;
-            return;
+            continue;
         }
         if (edge.second >= this->getNodeCount()) {
             std::cerr << "The second node index(" << edge.second << ") of the new edge [" << edge.first << ", " << edge.second << "] out of this graph with " << this->getNodeCount() << " node(s)." << std::endl;
-            return;
+            continue;
         }
         this->addEdge(edge);
     }

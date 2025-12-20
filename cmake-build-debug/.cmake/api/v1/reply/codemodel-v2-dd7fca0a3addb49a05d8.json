@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "GraphEngine::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-GraphEngine-Debug-89cfe273c45e3b994e19.json",
+					"jsonFile" : "target-GraphEngine-Debug-7bcc9ad5d01e52f0648f.json",
 					"name" : "GraphEngine",
 					"projectIndex" : 0
 				}
@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "G:/codingProjects/Clion/GraphEngine/cmake-build-debug",
-		"source" : "G:/codingProjects/Clion/GraphEngine"
+		"build" : "C:/Users/Ivor Aif/CLionProjects/GraphEngine/cmake-build-debug",
+		"source" : "C:/Users/Ivor Aif/CLionProjects/GraphEngine"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 4
+		"minor" : 7
 	}
 }
