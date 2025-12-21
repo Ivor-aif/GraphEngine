@@ -3,44 +3,25 @@ Simply process graphs/networks.
 
 # Project Description
 ****
-Now, you can use this project to create a simple graph. You can choose unidirected or undirected mode, add nodes or edges. And even visit all the neighbors in index order. See examples:
-```c++
-Graph graph(false, 3); // Create a new undirected graph with 3 nodes.
-std::cout << "The graph is directed? " << graph.isDirected() << ". It should be FALSE." << std::endl; // Confirm type of graph.
-std::cout << "There are " << graph.getNodeCount() << " nodes, it should be 3." << std::endl; // Show the node count.
-std::cout << "There are " << graph.getEdgeCount() << " edges, it should be 0." << std::endl; // A empty graph, i.e. without any edges.
-std::vector<std::pair<int, int>> validEdges = {{0, 1}, {1, 2}, {2, 0}};
-std::vector<std::pair<int, int>> invalidEdges = {{0, 3}, {4, 5}};
-graph.addEdges(validEdges); // Create a triangle structure.
-for (int i = 0; i < graph.getNodeCount(); i++) {
-    std::cout << "The " << i << "th node has " << graph.getNeighbors(i).size() << " neighbor(s)." << std::endl;
-    std::cout << "They are ";
-    for (int index: graph.getNeighbors(i)) {
-        std::cout << index << " ";
-    }
-    std::cout << std::endl;
-} // Show all neighbors of everyone.
-std::cout << "Then you will see some errors that invalid edges cannot be insert." << std::endl;
-graph.addEdges(invalidEdges); // Invalid value test.
-graph.addNode(); // Add one node.
-graph.addEdge(invalidEdges[0]); // It is valid now.
-graph.addNodes(2); // Add extra two nodes.
-graph.addEdge(invalidEdges[1]); // It is valid, too.
-for (int i = 0; i < graph.getNodeCount(); i++) {
-    std::cout << "The " << i << "th node has " << graph.getNeighbors(i).size() << " neighbor(s)." << std::endl;
-    std::cout << "They are ";
-    for (int index: graph.getNeighbors(i)) {
-        std::cout << index << " ";
-    }
-    std::cout << std::endl;
-} // Finally, there are 6 nodes and 5 undirected edges.
-```
+Now, you can use this project to create a simple graph. You may choose unidirected or undirected mode, add nodes or edges. And even visit all the neighbors in index order. Edge has changeable weight, and whether node or edge can be added or removed.\
+&emsp;- **Graph(int nodeCount = 0, bool directed = false)** Create a new graph with `nodeCount` nodes(`default: 0`), and `directed` whether the edge is directed or not(`default: undirected`).\
+&emsp;- **bool isDirected() const** To get whether the edge is directed or not.\
+&emsp;- **int getNodeCount() const** To get the number of node(s) in the whole graph.\
+&emsp;- **int getEdgeCount() const** To get the number of edge(s) in the whole graph, every two nodes have no more than one undirected edge or two unidirected edge.\
+&emsp;- **std::vector<std::pair<int, double>> getNeighbors(int nodeIndex)** To get all the (outer) neighbor(s) of `nodeindex`.\
+&emsp;- **void addNode(); void addNodes(int count)** To append new (`count`) node(s).\
+&emsp;- **void addEdge(std::tuple<int, int, double> edge); void addEdges(const std::vector<std::tuple<int, int, double>>& edges)** To insert new edge(s) into graph. If the edge existed, it will only add the weight into existed edge.\
+&emsp;- **void void updateEdgeWeight(std::tuple<int, int, double> newEdge); void updateEdgeWeights(const std::vector<std::tuple<int, int, double>>& newEdges)** To change edge(s)' weight if it has existed.\
+&emsp;- **void removeNode(int index); void removeNodes(std::vector<int> index)** Remove node(s) of `index` with all the related edges. _**Notice: This operate will change post-deleted nodes' index.**_\
+&emsp;- **void removeEdge(std::pair<int, int> neighborPair); void removeEdges(const std::vector<std::pair<int, int>>& neighborPairs)** Remove edge(s) of `neighborPair(s)` if existed.
+****
+Want to know more? See [Examples](Examples.md#examples-for-graphh---1).
 
 # Coming soon
 ****
-Graph _**WILL BE**_ support weight, and repeating edges will be merged by weight.
+Depth-first search, breadth-first search and Floyd-Warshall algorithm _**WILL COME SOON**_.
 
-# Configration
+# Configuration
 cmake minimum required: V3.25\
 cmake standard: C++ 20\
 Open Source License: [MIT LICENSE](LICENSE)
@@ -48,4 +29,5 @@ Open Source License: [MIT LICENSE](LICENSE)
 # Development Log
 ****
 **2025-12-20 first**: Created the *Graph* class with attributes and method.\
-**2025-12-20 second**: Tested the *Graph* class and _**fix bugs**_, such as edge count synchronization, add edges, and adjacency list.
+**2025-12-20 second**: Tested the *Graph* class and _**fix bugs**_, such as edge count synchronization, add edges, and adjacency list.\
+**2025-12-21 first**: Graph support the **edge's weight** now, the weight can be changed arbitrarily. Edge and node can be added or removed. When add an existed edge, it will be combined into weight with add operate.

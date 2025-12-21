@@ -1,3 +1,0 @@
-C:/Users/Ivor Aif/CLionProjects/GraphEngine/cmake-build-debug/CMakeFiles/GraphEngine.dir
-C:/Users/Ivor Aif/CLionProjects/GraphEngine/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Ivor Aif/CLionProjects/GraphEngine/cmake-build-debug/CMakeFiles/rebuild_cache.dir
