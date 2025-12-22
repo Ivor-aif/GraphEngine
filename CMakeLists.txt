@@ -3,4 +3,6 @@ project(GraphEngine)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(GraphEngine test.cpp sources/Graph.cpp headers/Graph.h)
+add_executable(GraphEngine test.cpp
+        sources/Graph.cpp headers/Graph.h
+        sources/algorithm.cpp headers/algorithm.h)

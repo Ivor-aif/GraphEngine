@@ -1,13 +1,41 @@
-#include "headers/Graph.h"
 #include <windows.h>
 
-void testForGraph_1(); // Something has been updated that the old usages may not available.
+#include "headers/Graph.h"
+#include "headers/algorithm.h"
+
+// void testForGraph_1(); // Something has been updated that the old usages may not available.
 void testForGraph_2();
+void testForAlgorithm_1();
 
 int main() {
     // testForGraph_1(); Something has been updated that the old usages may not available.
-    testForGraph_2();
+    // testForGraph_2();
+    testForAlgorithm_1();
     return 0;
+}
+
+void testForAlgorithm_1() {
+    Graph graph(5);
+    graph.addEdges({{1, 2, 2.}, {2, 3, 2.}, {3, 4, 2.}, {4, 1, 2.}});
+    graph.addEdges({{0, 1, 1.414}, {0, 2, 1.414}, {0, 3, 1.414}, {0, 4, 1.414}}); // Create a square with 'x'.
+    std::cout << "The graph is well-connected, right?" << (dfs(graph) ? " Yes." : " No!") << std::endl; // DFS is for confirm whether the whole graph is well-connected or not.
+    graph.addNodes(3);
+    graph.addEdges({{5, 6, 1.}, {6, 7, 1.}, {7, 5, 1.}}); // Add a subgraph.
+    std::cout << "Now, it is not well-connected, You will see FALSE. " << dfs(graph) << std::endl;
+    std::cout << "Nodes between 1 and 3 are connected: " << bfs(graph, {1, 3}) << "." << std::endl; // BFS is for confirm whether the first node can reach the second one or not.
+    std::cout << "Nodes between 1 and 7 are not connected: " << bfs(graph, {1, 7}) << "." << std::endl;
+    auto dist = floyd(graph); // Floyd is Floyd-Warshall algorithm, to calculate the minimal distance of every pair nodes.
+    std::cout << "The minimal distance between 1 and 3 is " << dist[1][3] << "." << std::endl;
+    /********************************************************************************************************************************/
+    std::cout << "Then you will see some errors that for incorrect calls." << std::endl;
+    Sleep(2000);
+    /* Then, attempt to test for incorrect calls */
+    bfs(graph, {100, 0});
+    bfs(graph, {0, 100}); // Overflow errors.
+    Graph emptyGraph;
+    dfs(emptyGraph);
+    bfs(emptyGraph, {0, 0});
+    floyd(emptyGraph); // Empty errors.
 }
 
 void testForGraph_2() {
