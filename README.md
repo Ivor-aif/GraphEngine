@@ -21,6 +21,8 @@ Simply process graphs/networks.
 &emsp;&emsp;- **bool bfs(Graph graph, std::pair<int, int> objPair)** To search whether the `objPair`'s first node can reach the second one in `graph` or not.\
 &emsp;&emsp;- **std::vector<std::vector<double>> floyd(Graph graph)** To calculate the minimal distance of every pair nodes in `graph` use *Floyd Warshall* algorithm. This algorithm is base on *Dynamic Programming* method, and can solve negative distance situation. **Negative loop is forbidden**. 
 #### Want to know more? See [Examples](Examples.md#examples-for-algorithmh---1).
+****
+&emsp;&emsp;Network's generator methods are _**Not yet tested**_.
 
 # Coming Soon
 ****
@@ -36,4 +38,5 @@ Open Source License: [MIT LICENSE](LICENSE)
 **2025-12-20 first**: Created the *Graph* class with attributes and method.\
 **2025-12-20 second**: Tested the *Graph* class and _**fix bugs**_, such as edge count synchronization, add edges, and adjacency list.\
 **2025-12-21 first**: Graph support the **edge's weight** now, the weight can be changed arbitrarily. Edge and node can be added or removed. When add an existed edge, it will be combined into weight with add operate.\
-**2025-12-22 first**: **DFS, BFS and Floyd Warshall** algorithms are supported.
+**2025-12-22 first**: **DFS, BFS and Floyd Warshall** algorithms are supported.\
+**2025-12-24 first**: [_**Not yet tested**_]Network's generator, regular structure, Erdös-Rényi random network and Watts-Strogatz small world network are supported.
