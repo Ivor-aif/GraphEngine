@@ -4,6 +4,16 @@
 
 #include "../headers/generator.h"
 
+Graph fullConnect(int nodeCount) {
+    Graph ret = Graph(nodeCount);
+    for (int i = 0; i < nodeCount; ++i) {
+        for (int j = 0; j < i; ++j) {
+            ret.addEdge({i, j, 1.});
+        }
+    }
+    return ret;
+}
+
 Graph lattice(int size, int dim) {
     int nodeCount = 1;
     for (int i = 0; i < dim; ++i) {
@@ -160,4 +170,47 @@ Graph erRandom(int nodeCount, int averageDegree, double connectRate, bool isRegu
 
 void wsSmallWorld(Graph& graph, double reconnectRate) {
     reconnect(graph, reconnectRate, 1);
+}
+
+Graph baScaleFree(int nodeCount, int averageDegree) {
+    if (nodeCount + 1 < averageDegree) {
+        std::cerr << "Too few node(s) " << nodeCount << " for " << averageDegree << " average degree." << std::endl;
+        return Graph();
+    }
+    if ((averageDegree & 1) && (nodeCount & 1)) {
+        std::cerr << "Neither average degree " << averageDegree << " nor node count " << nodeCount <<" can be odd." << std::endl;
+        return Graph();
+    }
+    Graph ret = fullConnect(averageDegree + 1);
+    std::vector<int> degreeList(averageDegree + 1, averageDegree);
+    for (int i = averageDegree + 1; i < nodeCount; ++i) {
+        ret.addNode();
+        int selectedCount = (averageDegree >> 1) + ((averageDegree & 1) ? (i & 1) : 0);
+        std::vector<int> selected(selectedCount, -1);
+        std::vector<int> weights(degreeList.size());
+        std::copy(degreeList.begin(), degreeList.end(), weights.begin());
+        int totalWeight = std::accumulate(weights.begin(), weights.end(), 0);
+        for (int j = 0; j < selectedCount; ++j) {
+            std::uniform_int_distribution<int> sample(0, totalWeight);
+            int locate = sample(gen);
+            for (int k = 0; k < i; ++k) {
+                if (!weights[k]) {
+                    continue;
+                }
+                locate -= weights[k];
+                if (locate <= 0) {
+                    selected.push_back(k);
+                    totalWeight -= weights[k];
+                    weights[k] = 0;
+                    break;
+                }
+            }
+        }
+        for (int obj: selected) {
+            ret.addEdge({i, obj, 1.});
+            degreeList[obj] ++;
+        }
+        degreeList.push_back(averageDegree);
+    }
+    return ret;
 }

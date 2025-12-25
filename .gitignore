@@ -43,3 +43,6 @@
 # Build files
 cmake-build-debug/
 .idea/
+
+# Test files
+tests/

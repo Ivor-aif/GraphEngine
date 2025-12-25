@@ -7,4 +7,5 @@ add_executable(GraphEngine test.cpp
         sources/Graph.cpp headers/Graph.h
         sources/algorithm.cpp headers/algorithm.h
         sources/generator.cpp headers/generator.h
-        )
+        sources/stats.cpp headers/stats.h
+)
