@@ -23,7 +23,10 @@ Graph lattice(int size, int dim) {
     for (int i = 0; i < nodeCount; ++i) {
         int tier = 1;
         for (int j = 0; j < dim; ++j) {
-            int neighborIndex = (i + tier) % (tier * size);
+            int neighborIndex = i + tier;
+            if (((i / tier) % size) == size - 1) {
+                neighborIndex = i - (size-1) * tier;
+            }
             ret.addEdge({i, neighborIndex, 1.});
             tier *= size;
         }
@@ -82,7 +85,7 @@ Graph oddRegular(int nodeCount, int degree) {
 void reconnect(Graph& graph, double rate, int mode) {
     int nodeCount = graph.getNodeCount();
     std::uniform_real_distribution<double> dist(0., 1.);
-    std::uniform_int_distribution<int> range(0, nodeCount);
+    std::uniform_int_distribution<int> range(0, nodeCount - 1);
     for (int i = 0; i < nodeCount; ++i) {
         if (!mode) {
             for (int j = 0; j < i; ++j) {
@@ -108,6 +111,18 @@ void reconnect(Graph& graph, double rate, int mode) {
                     graph.addEdge({i, newNeighbor, 1.});
                     std::pair<int, int> nextEdge(newNeighbor, range(gen));
                     while (true) {
+                        std::pair<int, double> arr[10] = {
+                                graph.getNeighbors(0)[0],
+                                graph.getNeighbors(0)[1],
+                                graph.getNeighbors(0)[2],
+                                graph.getNeighbors(0)[3],
+                                graph.getNeighbors(0)[4],
+                                graph.getNeighbors(0)[5],
+                                graph.getNeighbors(0)[6],
+                                graph.getNeighbors(0)[7],
+                                graph.getNeighbors(0)[8],
+                                graph.getNeighbors(0)[9],
+                        };
                         while (nextEdge.first == nextEdge.second ||
                                std::binary_search(graph.getNeighbors(nextEdge.first).begin(), graph.getNeighbors(nextEdge.first).end(), std::make_pair(nextEdge.second, 1.),
                                                   [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
@@ -115,7 +130,7 @@ void reconnect(Graph& graph, double rate, int mode) {
                                                   })) {
                             nextEdge.second = range(gen);
                         }
-                        std::uniform_int_distribution<int> local(0, (int)graph.getNeighbors(nextEdge.first).size());
+                        std::uniform_int_distribution<int> local(0, (int)graph.getNeighbors(nextEdge.first).size() - 1);
                         graph.removeEdge({nextEdge.first, graph.getNeighbors(nextEdge.first)[local(gen)].first});
                         graph.addEdge({nextEdge.first, nextEdge.second, 1.});
                         if (nextEdge.second == i) {
@@ -191,7 +206,7 @@ Graph baScaleFree(int nodeCount, int averageDegree) {
         std::copy(degreeList.begin(), degreeList.end(), weights.begin());
         int totalWeight = std::accumulate(weights.begin(), weights.end(), 0);
         for (int j = 0; j < selectedCount; ++j) {
-            std::uniform_int_distribution<int> sample(0, totalWeight);
+            std::uniform_int_distribution<int> sample(0, totalWeight - 1);
             int locate = sample(gen);
             for (int k = 0; k < i; ++k) {
                 if (!weights[k]) {

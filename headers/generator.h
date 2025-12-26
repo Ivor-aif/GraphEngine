@@ -9,7 +9,7 @@
 
 #include "Graph.h"
 
-std::mt19937 gen; // Seed can be set by user.
+static std::mt19937 gen; // Seed can be set by user.
 
 Graph fullConnect(int nodeCount);
 Graph lattice(int size, int dim = 2);

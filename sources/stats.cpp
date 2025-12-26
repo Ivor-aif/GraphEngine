@@ -35,8 +35,8 @@ double clusterCoefficient(Graph graph) {
         for (int j = 0; j < nei; ++j) {
             std::vector<std::pair<int, double>> nlj = graph.getNeighbors(nli[j].first);
             for (int k = 0; k < j; ++k) {
-                auto it = std::find_if(nlj.begin(), nlj.end(), [k](const std::pair<int, double>& obj) {
-                    return obj.first == k;
+                auto it = std::find_if(nlj.begin(), nlj.end(), [&](const std::pair<int, double>& obj) {
+                    return obj.first == nli[k].first;
                 });
                 lct += (it != nlj.end());
             }
@@ -45,6 +45,7 @@ double clusterCoefficient(Graph graph) {
             ret += 1. * (lct << 1) / nei / (nei-1);
         }
     }
+    ret /= nodeCount;
     return ret;
 }
 

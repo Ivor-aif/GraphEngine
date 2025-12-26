@@ -41,4 +41,5 @@ Open Source License: [MIT LICENSE](LICENSE)
 **2025-12-21 first**: Graph support the **edge's weight** now, the weight can be changed arbitrarily. Edge and node can be added or removed. When add an existed edge, it will be combined into weight with add operate.\
 **2025-12-22 first**: **DFS, BFS and Floyd Warshall** algorithms are supported.\
 **2025-12-24 first**: [_**Not yet tested**_]Network's generator, regular structure, Erdös-Rényi random network and Watts-Strogatz small world network are supported.\
-**2025-12-25 first**: [_**Not yet tested**_]Network's generator, full-connect and Barabási-Albert Scale-Free network are supported. Network's stats, degree distribution, cluster coefficient(**undirected graph only**) and distance information are supported.
+**2025-12-25 first**: [_**Not yet tested**_]Network's generator, full-connect and Barabási-Albert Scale-Free network are supported. Network's stats, degree distribution, cluster coefficient(**undirected graph only**) and distance information are supported.\
+**2025-12-26 first**: [_**Temporary upload**_]Incomplete testing and repair.
