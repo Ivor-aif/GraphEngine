@@ -47,11 +47,11 @@ void testForComplex_1() {
     std::cout << "Erdös-Rényi with lower connect rate will have larger average distance (" << std::get<1>(distance(erl)) << ") than the higher one (" << std::get<1>(distance(erh)) << ")." << std::endl;
     wsSmallWorld(lt, .5); // Make the lattice be small world.
     double swd = std::get<2>(distance(lt));
-    std::cout << "Small world network satisfied six-degree of separation theorem, so it has most " << swd << " distance." << std::endl;
+    std::cout << "Small world network satisfied six-degree of separation theorem, so the longest distance is " << swd << " for 1600 nodes with " << ltd.first.first << " average degree." << std::endl;
     Graph sf = baScaleFree(1000, 5);
     std::pair<std::pair<double, double>, std::vector<double>> sfd = degreeDistribution(sf);
     std::ofstream outfile;
-    outfile.open("tests/out.csv", std::ios::out);
+    outfile.open("..\\tests\\out.csv", std::ios::out);
     for (int i = 0; i < sfd.second.size(); ++i) {
         outfile << i << "," << sfd.second[i] << std::endl;
     }
@@ -76,7 +76,7 @@ void testForAlgorithm_1() {
     std::cout << "Now, it is not well-connected, You will see FALSE. " << dfs(graph) << std::endl;
     std::cout << "Nodes between 1 and 3 are connected: " << bfs(graph, {1, 3}) << "." << std::endl; // BFS is for confirm whether the first node can reach the second one or not.
     std::cout << "Nodes between 1 and 7 are not connected: " << bfs(graph, {1, 7}) << "." << std::endl;
-    auto dist = floyd(graph); // Floyd is Floyd-Warshall algorithm, to calculate the minimal distance of every pair nodes.
+    const auto dist = floyd(graph); // Floyd is Floyd-Warshall algorithm, to calculate the minimal distance of every pair nodes.
     std::cout << "The minimal distance between 1 and 3 is " << dist[1][3] << "." << std::endl;
     /********************************************************************************************************************************/
     std::cout << "Then you will see some errors that for incorrect calls." << std::endl;
@@ -84,7 +84,7 @@ void testForAlgorithm_1() {
     /* Then, attempt to test for incorrect calls */
     bfs(graph, {100, 0});
     bfs(graph, {0, 100}); // Overflow errors.
-    Graph emptyGraph;
+    const Graph emptyGraph;
     dfs(emptyGraph);
     bfs(emptyGraph, {0, 0});
     floyd(emptyGraph); // Empty errors.
@@ -132,7 +132,7 @@ void testForGraph_2() {
     std::cout << "Then you will see some errors that for incorrect calls." << std::endl;
     Sleep(2000);
     /* Then, attempt to test for incorrect calls */
-    graph.getNeighbors(1000);
+    auto neighbors = graph.getNeighbors(1000);
     graph.addEdges({{0, 100, -1.}, {100, 0, -1.}});
     graph.addEdge({0, 100, -1.});
     graph.addEdge({100, 0, -1.});

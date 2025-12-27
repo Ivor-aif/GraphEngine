@@ -4,8 +4,8 @@
 
 #include "../headers/generator.h"
 
-Graph fullConnect(int nodeCount) {
-    Graph ret = Graph(nodeCount);
+Graph fullConnect(const int nodeCount) {
+    auto ret = Graph(nodeCount);
     for (int i = 0; i < nodeCount; ++i) {
         for (int j = 0; j < i; ++j) {
             ret.addEdge({i, j, 1.});
@@ -14,12 +14,12 @@ Graph fullConnect(int nodeCount) {
     return ret;
 }
 
-Graph lattice(int size, int dim) {
+Graph lattice(const int size, const int dim) {
     int nodeCount = 1;
     for (int i = 0; i < dim; ++i) {
         nodeCount *= size;
     }
-    Graph ret = Graph(nodeCount, false);
+    auto ret = Graph(nodeCount, false);
     for (int i = 0; i < nodeCount; ++i) {
         int tier = 1;
         for (int j = 0; j < dim; ++j) {
@@ -34,7 +34,7 @@ Graph lattice(int size, int dim) {
     return ret;
 }
 
-Graph ring(int nodeCount, int degree) {
+Graph ring(const int nodeCount, const int degree) {
     if (degree < 0) {
         std::cerr << "Nodes cannot have NEGATIVE neighbors: " << degree << "." << std::endl;
         return Graph();
@@ -44,13 +44,13 @@ Graph ring(int nodeCount, int degree) {
         return Graph();
     }
     if (degree >= nodeCount) {
-        std::cerr << "Cannot generate a graph with " << nodeCount << " node(s), and each node have" << degree << " neighbor(s)." << std::endl;
+        std::cerr << "Cannot generate a graph with " << nodeCount << " node(s), and each node have " << degree << " neighbor(s)." << std::endl;
         return Graph();
     }
     if (!degree) {
         std::cout << "Warning! Nodes will have no neighbor." << std::endl;
     }
-    Graph ret = Graph(nodeCount, false);
+    auto ret = Graph(nodeCount, false);
     for (int i = 0; i < nodeCount; ++i) {
         for (int j = 0; j < (degree >> 1); ++j) {
             ret.addEdge({i, (i+1+j) % nodeCount, 1.});
@@ -59,7 +59,7 @@ Graph ring(int nodeCount, int degree) {
     return ret;
 }
 
-Graph oddRegular(int nodeCount, int degree) {
+Graph oddRegular(const int nodeCount, const int degree) {
     if (degree < 3) {
         std::cerr << "Too few neighbor(s): " << degree << "." << std::endl;
         return Graph();
@@ -69,7 +69,7 @@ Graph oddRegular(int nodeCount, int degree) {
         return Graph();
     }
     if (degree >= nodeCount) {
-        std::cerr << "Cannot generate a graph with " << nodeCount << " node(s), and each node have" << degree << " neighbor(s)." << std::endl;
+        std::cerr << "Cannot generate a graph with " << nodeCount << " node(s), and each node have " << degree << " neighbor(s)." << std::endl;
         return Graph();
     }
     if (nodeCount & 1) {
@@ -82,8 +82,8 @@ Graph oddRegular(int nodeCount, int degree) {
     return ret;
 }
 
-void reconnect(Graph& graph, double rate, int mode) {
-    int nodeCount = graph.getNodeCount();
+void reconnect(Graph& graph, const double rate, const int mode) {
+    const int nodeCount = graph.getNodeCount();
     std::uniform_real_distribution<double> dist(0., 1.);
     std::uniform_int_distribution<int> range(0, nodeCount - 1);
     for (int i = 0; i < nodeCount; ++i) {
@@ -94,67 +94,60 @@ void reconnect(Graph& graph, double rate, int mode) {
                 }
             }
         } else if (!~mode) {
-            std::vector<std::pair<int, double>> neighbors = graph.getNeighbors(i);
-            for (std::pair<int, double> neighbor: neighbors) {
+            for (std::vector<std::pair<int, double>> neighbors = graph.getNeighbors(i); std::pair<int, double> neighbor: neighbors) {
                 if (i < neighbor.first) {
                     break;
                 }
                 if (dist(gen) < rate) {
+                    if (!std::ranges::binary_search(graph.getNeighbors(i), std::make_pair(neighbor.first, 1.),
+                                                    [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
+                                                        return left.first < right.first;
+                                                    })) {
+                        continue;
+                    }
                     graph.removeEdge({i, neighbor.first});
                     int newNeighbor = range(gen);
-                    while (newNeighbor == i || std::binary_search(graph.getNeighbors(i).begin(), graph.getNeighbors(i).end(), std::make_pair(newNeighbor, 1.),
-                                                                  [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
-                                                                      return left.first < right.first;
-                                                                  })) {
+                    while (newNeighbor == i || std::ranges::binary_search(graph.getNeighbors(i), std::make_pair(newNeighbor, 1.),
+                                                                          [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
+                                                                              return left.first < right.first;
+                                                                          })) {
                         newNeighbor = range(gen);
                     }
                     graph.addEdge({i, newNeighbor, 1.});
-                    std::pair<int, int> nextEdge(newNeighbor, range(gen));
+                    std::pair<int, int> nextEdge(newNeighbor, -1);
                     while (true) {
-                        std::pair<int, double> arr[10] = {
-                                graph.getNeighbors(0)[0],
-                                graph.getNeighbors(0)[1],
-                                graph.getNeighbors(0)[2],
-                                graph.getNeighbors(0)[3],
-                                graph.getNeighbors(0)[4],
-                                graph.getNeighbors(0)[5],
-                                graph.getNeighbors(0)[6],
-                                graph.getNeighbors(0)[7],
-                                graph.getNeighbors(0)[8],
-                                graph.getNeighbors(0)[9],
-                        };
-                        while (nextEdge.first == nextEdge.second ||
-                               std::binary_search(graph.getNeighbors(nextEdge.first).begin(), graph.getNeighbors(nextEdge.first).end(), std::make_pair(nextEdge.second, 1.),
-                                                  [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
-                                                      return left.first < right.first;
-                                                  })) {
+                        std::uniform_int_distribution<int> local(0, static_cast<int>(graph.getNeighbors(nextEdge.first).size()) - 1);
+                        int iter = graph.getNeighbors(nextEdge.first)[local(gen)].first;
+                        graph.removeEdge({nextEdge.first, iter});
+                        nextEdge.first = iter;
+                        while (nextEdge.first == nextEdge.second || !~nextEdge.second ||
+                               std::ranges::binary_search(graph.getNeighbors(nextEdge.first), std::make_pair(nextEdge.second, 1.),
+                                                          [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
+                                                              return left.first < right.first;
+                                                          })) {
                             nextEdge.second = range(gen);
                         }
-                        std::uniform_int_distribution<int> local(0, (int)graph.getNeighbors(nextEdge.first).size() - 1);
-                        graph.removeEdge({nextEdge.first, graph.getNeighbors(nextEdge.first)[local(gen)].first});
                         graph.addEdge({nextEdge.first, nextEdge.second, 1.});
-                        if (nextEdge.second == i) {
+                        if (nextEdge.second == neighbor.first) {
                             break;
-                        } else {
-                            nextEdge.first = nextEdge.second;
-                            nextEdge.second = range(gen);
                         }
+                        nextEdge.first = nextEdge.second;
+                        nextEdge.second = -1;
                     }
                 }
             }
         } else {
-            std::vector<std::pair<int, double>> neighbors = graph.getNeighbors(i);
-            for (std::pair<int, double> neighbor: neighbors) {
+            for (std::vector<std::pair<int, double>> neighbors = graph.getNeighbors(i); std::pair<int, double> neighbor: neighbors) {
                 if (i < neighbor.first) {
                     break;
                 }
                 if (dist(gen) < rate) {
                     graph.removeEdge({i, neighbor.first});
                     int newNeighbor = range(gen);
-                    while (newNeighbor == i || std::binary_search(graph.getNeighbors(i).begin(), graph.getNeighbors(i).end(), std::make_pair(newNeighbor, 1.),
-                                                                  [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
-                                                                      return left.first < right.first;
-                                                                  })) {
+                    while (newNeighbor == i || std::ranges::binary_search(graph.getNeighbors(i), std::make_pair(newNeighbor, 1.),
+                                                                          [](const std::pair<int, double>& left, const std::pair<int, double>& right) {
+                                                                              return left.first < right.first;
+                                                                          })) {
                         newNeighbor = range(gen);
                     }
                     graph.addEdge({i, newNeighbor, 1.});
@@ -164,30 +157,28 @@ void reconnect(Graph& graph, double rate, int mode) {
     }
 }
 
-Graph erRandom(int nodeCount, int averageDegree, double connectRate, bool isRegular) {
+Graph erRandom(const int nodeCount, const int averageDegree, const double connectRate, const bool isRegular) {
     if (isRegular) {
         if (averageDegree & 1) {
             Graph ret = oddRegular(nodeCount, averageDegree);
             reconnect(ret, connectRate, -1);
             return ret;
-        } else {
-            Graph ret = ring(nodeCount, averageDegree);
-            reconnect(ret, connectRate, -1);
-            return ret;
         }
-    } else {
-        std::cout << "Arg `averageDegree` is not effective for irregular Erdös-Rényi random network." << std::endl;
-        Graph ret = Graph(nodeCount);
-        reconnect(ret, connectRate, 0);
+        Graph ret = ring(nodeCount, averageDegree);
+        reconnect(ret, connectRate, -1);
         return ret;
     }
+    std::cout << "Arg `averageDegree` is not effective for irregular Erdös-Rényi random network." << std::endl;
+    auto ret = Graph(nodeCount);
+    reconnect(ret, connectRate, 0);
+    return ret;
 }
 
-void wsSmallWorld(Graph& graph, double reconnectRate) {
+void wsSmallWorld(Graph& graph, const double reconnectRate) {
     reconnect(graph, reconnectRate, 1);
 }
 
-Graph baScaleFree(int nodeCount, int averageDegree) {
+Graph baScaleFree(const int nodeCount, const int averageDegree) {
     if (nodeCount + 1 < averageDegree) {
         std::cerr << "Too few node(s) " << nodeCount << " for " << averageDegree << " average degree." << std::endl;
         return Graph();
@@ -200,10 +191,10 @@ Graph baScaleFree(int nodeCount, int averageDegree) {
     std::vector<int> degreeList(averageDegree + 1, averageDegree);
     for (int i = averageDegree + 1; i < nodeCount; ++i) {
         ret.addNode();
-        int selectedCount = (averageDegree >> 1) + ((averageDegree & 1) ? (i & 1) : 0);
-        std::vector<int> selected(selectedCount, -1);
+        const int selectedCount = (averageDegree >> 1) + ((averageDegree & 1) ? (i & 1) : 0);
+        std::vector<int> selected(0);
         std::vector<int> weights(degreeList.size());
-        std::copy(degreeList.begin(), degreeList.end(), weights.begin());
+        std::ranges::copy(degreeList, weights.begin());
         int totalWeight = std::accumulate(weights.begin(), weights.end(), 0);
         for (int j = 0; j < selectedCount; ++j) {
             std::uniform_int_distribution<int> sample(0, totalWeight - 1);

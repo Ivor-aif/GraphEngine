@@ -78,3 +78,56 @@ void testForAlgorithm_1() {
     floyd(emptyGraph); // Empty errors.
 }
 ```
+
+## Examples for generator.h and stats.h - 1
+```C++
+void testForComplex_1() {
+    gen.seed(1024); // Make it repeatable.
+    Graph fc = fullConnect(20); // Full connected network.
+    std::pair<std::pair<double, double>, std::vector<double>> fcd = degreeDistribution(fc);
+    double fcc = clusterCoefficient(fc);
+    std::tuple<double, double, double> fcl = distance(fc);
+    std::cout << "The full connected network with 20 nodes will have equality degrees (19 for every node), maximum cluster coefficient (1) and same distances for each pair of nodes (1)." << std::endl;
+    std::cout << "Average degree: " << fcd.first.first << ", variance of degree: " << fcd.first.second << "." << std::endl;
+    std::cout << "Cluster coefficient: " << fcc << "." << std::endl;
+    std::cout << "Average distance: " << std::get<1>(fcl) << ", distance distribution area: [" << std::get<0>(fcl) << ", " << std::get<2>(fcl) << "]." << std::endl;
+    Graph lt = lattice(40); // 40*40 with period boundary condition 2D-lattice network.
+    std::pair<std::pair<double, double>, std::vector<double>> ltd = degreeDistribution(lt);
+    double ltc = clusterCoefficient(lt);
+    std::cout << "The 2D-lattice grid with 40*40 nodes will have equality degrees (2*2=4 for every node), no cluster coefficient." << std::endl;
+    std::cout << "Average degree: " << ltd.first.first << ", variance of degree: " << ltd.first.second << "." << std::endl;
+    std::cout << "Cluster coefficient: " << ltc << "." << std::endl;
+    std::pair<std::pair<double, double>, std::vector<double>> fdr = degreeDistribution(ring(99, 4));
+    std::pair<std::pair<double, double>, std::vector<double>> ndr = degreeDistribution(oddRegular(100, 9));
+    std::pair<std::pair<double, double>, std::vector<double>> err = degreeDistribution(erRandom(100, 9, .3, true)); // Regular graphs.
+    std::cout << "Regular graph (especially ring structure here) will have equality degrees." << std::endl;
+    std::cout << "Four-degree ring's average degree: " << fdr.first.first << ", variance of degree: " << fdr.first.second << "." << std::endl;
+    std::cout << "Nine-degree ring's average degree: " << ndr.first.first << ", variance of degree: " << ndr.first.second << "." << std::endl;
+    std::cout << "Erdös-Rényi regular random network's average degree: " << err.first.first << ", variance of degree: " << err.first.second << "." << std::endl;
+    Graph erl = erRandom(200, -1, .04);
+    Graph erh = erRandom(200, -1, .40); // Erdös-Rényi graph with different connect rate.
+    std::cout << "Erdös-Rényi with lower connect rate will have larger average distance (" << std::get<1>(distance(erl)) << ") than the higher one (" << std::get<1>(distance(erh)) << ")." << std::endl;
+    wsSmallWorld(lt, .5); // Make the lattice be small world.
+    double swd = std::get<2>(distance(lt));
+    std::cout << "Small world network satisfied six-degree of separation theorem, so the longest distance is " << swd << " for 1600 nodes with " << ltd.first.first << " average degree." << std::endl;
+    Graph sf = baScaleFree(1000, 5);
+    std::pair<std::pair<double, double>, std::vector<double>> sfd = degreeDistribution(sf);
+    std::ofstream outfile;
+    outfile.open("..\\tests\\out.csv", std::ios::out);
+    for (int i = 0; i < sfd.second.size(); ++i) {
+        outfile << i << "," << sfd.second[i] << std::endl;
+    }
+    outfile.close();
+    std::cout << "Barabási-Albert scale-free network has power-law degree distribution, see \"out.csv\"." << std::endl;
+    /********************************************************************************************************************************/
+    std::cout << "Then you will see some errors that for incorrect calls." << std::endl;
+    Sleep(2000);
+    ring(-1), ring(4, 4), ring(10, 3), ring(10, 0);
+    oddRegular(10, 4), oddRegular(10, 1), oddRegular(10, 11), oddRegular(9, 5);
+    baScaleFree(10, 12), baScaleFree(11, 7);
+    clusterCoefficient(Graph(5, true));
+}
+```
+### Appendix: Barabási-Albert scale-free network's degree distribution
+![out.bmp](tests/out.bmp)
+[out.csv](tests/out.csv)

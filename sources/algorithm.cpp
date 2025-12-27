@@ -4,13 +4,13 @@
 
 #include "../headers/algorithm.h"
 
-bool dfs(Graph graph) {
+bool dfs(const Graph &graph) {
     if (!graph.getNodeCount()) {
         std::cerr << "Cannot search for an empty graph." << std::endl;
         return false;
     }
     std::vector<bool> visit(graph.getNodeCount(), false);
-    std::function<void(int)> dfsLambda = [&](int index) {
+    std::function<void(int)> dfsLambda = [&](const int index) {
         visit[index] = true;
         for (std::pair<int, double> neighbor: graph.getNeighbors(index)) {
             if (!visit[neighbor.first]) {
@@ -19,10 +19,10 @@ bool dfs(Graph graph) {
         }
     };
     dfsLambda(0);
-    return std::all_of(visit.begin(), visit.end(), [](bool isTrue) {return isTrue;});
+    return std::ranges::all_of(visit, [](const bool isTrue) {return isTrue;});
 }
 
-bool bfs(Graph graph, std::pair<int, int> objPair) {
+bool bfs(const Graph& graph, const std::pair<int, int>& objPair) {
     if (!graph.getNodeCount()) {
         std::cerr << "Cannot search for an empty graph." << std::endl;
         return false;
@@ -55,17 +55,17 @@ bool bfs(Graph graph, std::pair<int, int> objPair) {
     return false;
 }
 
-std::vector<std::vector<double>> floyd(Graph graph) {
+std::vector<std::vector<double>> floyd(const Graph& graph) {
     if (!graph.getNodeCount()) {
         std::cerr << "Cannot apply on an empty graph." << std::endl;
         return std::vector<std::vector<double>>(0);
     }
-    int nc = graph.getNodeCount();
-    double inf = 1.e150; // DOUBLE_MAX ~ pow(2, 1024) ~ 1.e308, here `inf` * 2. will not exceed it.
+    const int nc = graph.getNodeCount();
+    constexpr double inf = 1.e150; // DOUBLE_MAX ~ pow(2, 1024) ~ 1.e308, here `inf` * 2. will not exceed it.
     std::vector<std::vector<double>> distMat(nc, std::vector<double>(nc, inf));
     for (int i = 0; i < nc; ++i) {
-        for (std::pair<int, double> neighbor: graph.getNeighbors(i)) {
-            distMat[i][neighbor.first] = neighbor.second;
+        for (auto [destination, distance]: graph.getNeighbors(i)) {
+            distMat[i][destination] = distance;
         }
         distMat[i][i] = 0.;
     }

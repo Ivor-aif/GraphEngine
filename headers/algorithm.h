@@ -10,8 +10,8 @@
 
 #include "Graph.h"
 
-bool dfs(Graph graph);
-bool bfs(Graph graph, std::pair<int, int> objPair);
-std::vector<std::vector<double>> floyd(Graph graph);
+bool dfs(const Graph& graph);
+bool bfs(const Graph& graph, const std::pair<int, int>& objPair);
+std::vector<std::vector<double>> floyd(const Graph& graph);
 
 #endif // GRAPHENGINE_ALGORITHM_H

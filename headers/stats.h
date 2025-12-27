@@ -7,8 +7,8 @@
 
 #include "Graph.h"
 
-std::pair<std::pair<double, double>, std::vector<double>> degreeDistribution(Graph graph);
-double clusterCoefficient(Graph graph);
+std::pair<std::pair<double, double>, std::vector<double>> degreeDistribution(const Graph& graph);
+double clusterCoefficient(const Graph& graph);
 std::tuple<double, double, double> distance(const Graph& graph);
 
 #endif // GRAPHENGINE_STATS_H

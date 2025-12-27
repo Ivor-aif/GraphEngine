@@ -22,12 +22,12 @@ public:
     [[nodiscard]] bool isDirected() const;
     [[nodiscard]] int getNodeCount() const;
     [[nodiscard]] int getEdgeCount() const;
-    std::vector<std::pair<int, double>> getNeighbors(int nodeIndex);
+    [[nodiscard]] const std::vector<std::pair<int, double>>& getNeighbors(int nodeIndex) const;
     void addNode();
     void addNodes(int count);
-    void addEdge(std::tuple<int, int, double> edge);
+    void addEdge(const std::tuple<int, int, double>& edge);
     void addEdges(const std::vector<std::tuple<int, int, double>>& edges);
-    void updateEdgeWeight(std::tuple<int, int, double> newEdge);
+    void updateEdgeWeight(const std::tuple<int, int, double>& newEdge);
     void updateEdgeWeights(const std::vector<std::tuple<int, int, double>>& newEdges);
     void removeNode(int index);
     void removeNodes(std::vector<int> index);
