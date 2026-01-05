@@ -4,7 +4,7 @@
 
 #include "../headers/algorithm.h"
 
-bool dfs(const Graph &graph) {
+bool dfs(const Graph& graph) {
     if (!graph.getNodeCount()) {
         std::cerr << "Cannot search for an empty graph." << std::endl;
         return false;

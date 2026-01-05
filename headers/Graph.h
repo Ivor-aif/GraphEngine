@@ -12,7 +12,7 @@
 
 class Graph {
 private:
-    const bool directed;
+    bool directed;
     int nodeCount, edgeCount;
     std::vector<std::vector<std::pair<int, double>>> adjacencyList;
 
